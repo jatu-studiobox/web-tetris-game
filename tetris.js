@@ -105,57 +105,59 @@ class Tetris {
     }
 }
 
-const imageSquareSize = 24;
-const size = 40;
-const framePerSecond = 24;
+const imageSquareSize = 25;
+const size = 30;
+const framePerSecond = 25;
 const gameSpeed = 1;
 const canvas = document.getElementById("canvas");
 const nextShapeCanvas = document.getElementById("nextShapeCanvas");
-const scoreCanvas = document.getElementById("scoreCanvas");
+const scoreText = document.getElementById("scoreText");
 const image = document.getElementById("image");
 const ctx = canvas.getContext("2d");
 const nctx = nextShapeCanvas.getContext("2d");
-const sctx = scoreCanvas.getContext("2d");
 const squareCountX = canvas.width / size;
 const squareCountY = canvas.height / size;
 const btnRefresh = document.getElementById("btnRefresh");
 
-// initial tetris shapes
+// Score Section
+const scoreDeletedRow = 1000;
+
+// Initial tetris shapes
 const shapes = [
-    new Tetris(0, 144, [
-        [0, 0, 0],
-        [1, 1, 0],
-        [0, 1, 1]
+    new Tetris(0, 0, [
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 1, 0],
     ]),
-    new Tetris(0, 120, [
-        [0, 1, 0],
-        [0, 1, 0],
-        [1, 1, 0]
+    new Tetris(0, 25, [
+        [1, 1],
+        [1, 1]
     ]),
-    new Tetris(0, 96, [
-        [0, 0, 0],
-        [1, 1, 1],
-        [0, 1, 0]
-    ]),
-    new Tetris(0, 72, [
-        [0, 1, 0],
-        [0, 1, 0],
-        [0, 1, 1]
-    ]),
-    new Tetris(0, 48, [
+    new Tetris(0, 50, [
         [0, 0, 0],
         [0, 1, 1],
         [1, 1, 0]
     ]),
-    new Tetris(0, 24, [
-        [0, 0, 1, 0],
-        [0, 0, 1, 0],
-        [0, 0, 1, 0],
-        [0, 0, 1, 0],
+    new Tetris(0, 75, [
+        [0, 0, 0],
+        [1, 1, 1],
+        [0, 1, 0]
     ]),
-    new Tetris(0, 0, [
-        [1, 1],
-        [1, 1]
+    new Tetris(0, 100, [
+        [0, 1, 0],
+        [0, 1, 0],
+        [1, 1, 0]
+    ]),
+    new Tetris(0, 125, [
+        [0, 1, 0],
+        [0, 1, 0],
+        [0, 1, 1]
+    ]),
+    new Tetris(0, 150, [
+        [0, 0, 0],
+        [1, 1, 0],
+        [0, 1, 1]
     ])
 ];
 
@@ -165,7 +167,7 @@ let currentShape;
 let nextShape;
 let score;
 let initialTwoDArr;
-let whiteLineThickness = 4;
+let whiteLineThickness = 3;
 
 const gameLoop = () => {
     setInterval(update, 1000 / gameSpeed);
@@ -181,7 +183,7 @@ const deleteCompleteRows = () => {
         }
         if (isComplete) {
             console.log("complete row");
-            score += 1000;
+            score += scoreDeletedRow;
             for (let k = i; k > 0; k--) {
                 gameMap[k] = gameMap[k - 1];
             }
@@ -222,7 +224,7 @@ const drawRect = (x, y, width, height, color) => {
 };
 
 const drawBackground = () => {
-    drawRect(0, 0, canvas.width, canvas.height, "#bca0dc");
+    drawRect(0, 0, canvas.width, canvas.height, "#cccccc");
     for (let i = 0; i < squareCountX + 1; i++) {
         drawRect(
             size * i - whiteLineThickness,
@@ -284,7 +286,7 @@ const drawSquares = () => {
 };
 
 const drawNextShape = () => {
-    nctx.fillStyle = "#bca0dc";
+    nctx.fillStyle = "#cccccc";
     nctx.fillRect(0, 0, nextShapeCanvas.width, nextShapeCanvas.height);
     for (let i = 0; i < nextShape.template.length; i++) {
         for (let j = 0; j < nextShape.template.length; j++) {
@@ -305,20 +307,24 @@ const drawNextShape = () => {
 };
 
 const drawScore = () => {
-    sctx.clearRect(0, 0, scoreCanvas.width, scoreCanvas.height);
-    sctx.font = "64px Poppins";
-    sctx.fillStyle = "black";
-    sctx.fillText(score, 10, 50);
+    scoreText.innerHTML = score;
 };
 
 const drawGameOver = () => {
-    ctx.font = "64px Poppins";
+    // Draw Background Alpha Black
+    ctx.globalAlpha = 0.7;
     ctx.fillStyle = "black";
-    ctx.fillText("Game Over !!", 10, canvas.height / 2);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Text "Game Over"
+    ctx.globalAlpha = 1.0;
+    ctx.font = "36px Silkscreen";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText("Game Over !!", canvas.width / 2, canvas.height / 2);
 };
 
 const draw = () => {
-    // console.log("draw");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBackground();
     drawSquares();
@@ -330,6 +336,7 @@ const draw = () => {
     }
 };
 
+// Random Tetris Shape
 const getRandomShape = () => {
     return Object.create(shapes[Math.floor(Math.random() * shapes.length)]);
 };
@@ -350,13 +357,16 @@ const resetVars = () => {
     gameMap = initialTwoDArr;
 };
 
+// Add Event 'Keydown' for play game
 window.addEventListener("keydown", (event) => {
-    if (event.keyCode == 37) currentShape.moveLeft();
-    else if (event.keyCode == 38) currentShape.changeRotation();
-    else if (event.keyCode == 39) currentShape.moveRight();
-    else if (event.keyCode == 40) currentShape.moveBottom();
+    if (event.keyCode == 37) currentShape.moveLeft();   // key 'left' for move to left
+    else if (event.keyCode == 38) currentShape.changeRotation();    // key 'up' for Tetris rotation
+    else if (event.keyCode == 39) currentShape.moveRight(); // key 'right' for move to bottom
+    else if (event.keyCode == 40) currentShape.moveBottom();    // key 'down' for move to bottom
+    else if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
 });
 
+// Add Event 'refresh' button click
 btnRefresh.addEventListener("click", () => {
     resetVars();
 });

@@ -5,25 +5,45 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
     <title>Tetris Game</title>
     <style>
+        body {
+            background-color: black;
+            font-family: 'Silkscreen', cursive;
+        }
+
         .grid-container {
             display: inline-grid;
             grid-template-columns: auto auto;
-            background-color: #2196F3;
-            padding: 10px;
+            padding: 0px;
         }
 
         .grid-item {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: navy;
             border: 1px solid rgba(0, 0, 0, 0.8);
-            padding: 20px;
+            padding: 10px;
             font-size: 30px;
-            text-align: center;
         }
 
-        .item1 {
+        .playing-area {
             grid-row: 1 / 4;
+        }
+
+        .score-area {
+            text-align: right;
+            color: white;
+            font-size: 25px;
+        }
+
+        .score-title {
+            font-size: 24px;
+        }
+
+        .score-text {
+            font-size: 30px;
         }
 
         .imageTemplate {
@@ -38,9 +58,11 @@
             cursor: pointer;
             border: 0px;
         }
+
         button.refresh:hover {
             background-color: #bca0dc;
         }
+
         button.refresh:active {
             background-color: purple;
         }
@@ -49,15 +71,19 @@
 
 <body>
     <div class="grid-container">
-        <div class="grid-item item1"><canvas id="canvas" width="400" height="800"></canvas></div>
-        <div class="grid-item"><canvas id="nextShapeCanvas" width="200" height="200"> </canvas></div>
-        <div class="grid-item"><canvas id="scoreCanvas" width="200" height="200"> </canvas></div>
+        <div class="grid-item playing-area"><canvas id="canvas" width="300" height="600"></canvas></div>
+        <div class="grid-item">
+            <canvas id="nextShapeCanvas" width="150" height="150"> </canvas>
+        </div>
+        <div class="grid-item score-area">
+            <div class="score-title">SCORE:</div>
+            <div class="score-text" id="scoreText">0</div>
+        </div>
         <div class="grid-item">
             <button class="refresh" id="btnRefresh" title="refresh">
                 <svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
                     <use class="ytp-svg-shadow" xlink:href="#ytp-id-180"></use>
-                    <path class="ytp-svg-fill"
-                        fill="#ffffff"
+                    <path class="ytp-svg-fill" fill="#ffffff"
                         d="M 18,11 V 7 l -5,5 5,5 v -4 c 3.3,0 6,2.7 6,6 0,3.3 -2.7,6 -6,6 -3.3,0 -6,-2.7 -6,-6 h -2 c 0,4.4 3.6,8 8,8 4.4,0 8,-3.6 8,-8 0,-4.4 -3.6,-8 -8,-8 z"
                         id="ytp-id-180"></path>
                 </svg>
