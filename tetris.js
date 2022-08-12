@@ -105,23 +105,28 @@ class Tetris {
     }
 }
 
-const imageSquareSize = 25;
-const size = 30;
-const framePerSecond = 25;
-const gameSpeed = 1;
+// Game config
 const canvas = document.getElementById("canvas");
 const nextShapeCanvas = document.getElementById("nextShapeCanvas");
 const scoreText = document.getElementById("scoreText");
 const image = document.getElementById("image");
+const btnRefresh = document.getElementById("btnRefresh");
+
+const imageSquareSize = 25;
+const size = 30;
+const framePerSecond = 25;
+const gameSpeed = 1;
+const displayLineheight = 40;
 const ctx = canvas.getContext("2d");
 const nctx = nextShapeCanvas.getContext("2d");
 const squareCountX = canvas.width / size;
 const squareCountY = canvas.height / size;
-const btnRefresh = document.getElementById("btnRefresh");
 
 // Constant section
 const textGameOver = "Game Over!!";
+const textPressNewGame = ["Press 'R'", "for new game"];
 const textPause = "Pause";
+const textPressContinue = ["Press Space Bar", "for continue"];
 
 // Score section
 const scoreDeletedRow = 1000;
@@ -293,7 +298,7 @@ const drawSquares = () => {
 };
 
 const drawNextShape = () => {
-    nctx.fillStyle = "#cccccc";
+    nctx.fillStyle = "white";
     nctx.fillRect(0, 0, nextShapeCanvas.width, nextShapeCanvas.height);
     for (let i = 0; i < nextShape.template.length; i++) {
         for (let j = 0; j < nextShape.template.length; j++) {
@@ -318,17 +323,23 @@ const drawScore = () => {
 };
 
 const drawGameOver = () => {
-    // Draw Background Alpha Black
+    // Draw background alpha black
     ctx.globalAlpha = 0.7;
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Text "Game Over"
+    // Draw text "Game Over"
     ctx.globalAlpha = 1.0;
     ctx.font = "36px Silkscreen";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    ctx.fillText(textGameOver, canvas.width / 2, canvas.height / 2);
+    ctx.fillText(textGameOver, canvas.width / 2, (canvas.height / 2) - displayLineheight);
+
+    // Draw text press button
+    ctx.font = "26px Silkscreen";
+    for (var j = 0; j < textPressNewGame.length; j++) {
+        ctx.fillText(textPressNewGame[j], canvas.width / 2, (canvas.height / 2) + (j * displayLineheight));
+    }
 };
 
 const drawPause = () => {
@@ -337,11 +348,16 @@ const drawPause = () => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw Text "Pause"
-    ctx.globalAlpha = 1.0;
     ctx.font = "36px Silkscreen";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    ctx.fillText(textPause, canvas.width / 2, canvas.height / 2);
+    ctx.fillText(textPause, canvas.width / 2, (canvas.height / 2) - displayLineheight);
+
+    // Draw text press button
+    ctx.font = "26px Silkscreen";
+    for (var j = 0; j < textPressContinue.length; j++) {
+        ctx.fillText(textPressContinue[j], canvas.width / 2, (canvas.height / 2) + (j * displayLineheight));
+    }
 }
 
 const draw = () => {
