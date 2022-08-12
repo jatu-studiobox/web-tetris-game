@@ -119,7 +119,11 @@ const squareCountX = canvas.width / size;
 const squareCountY = canvas.height / size;
 const btnRefresh = document.getElementById("btnRefresh");
 
-// Score Section
+// Constant section
+const textGameOver = "Game Over!!";
+const textPause = "Pause";
+
+// Score section
 const scoreDeletedRow = 1000;
 
 // Initial tetris shapes
@@ -168,6 +172,7 @@ let nextShape;
 let score;
 let initialTwoDArr;
 let whiteLineThickness = 3;
+let gamePause;
 
 const gameLoop = () => {
     setInterval(update, 1000 / gameSpeed);
@@ -197,24 +202,26 @@ const deleteCompleteRows = () => {
 };
 
 const update = () => {
-    if (gameOver) return;
-    if (currentShape.checkBottom()) {
-        currentShape.y += 1;
-    } else {
-        for (let k = 0; k < currentShape.template.length; k++) {
-            for (let l = 0; l < currentShape.template.length; l++) {
-                if (currentShape.template[k][l] == 0) continue;
-                const currentTruncePositionXY = currentShape.getTruncedPosition();
-                gameMap[currentTruncePositionXY.y + l][currentTruncePositionXY.x + k] = { imageX: currentShape.imageX, imageY: currentShape.imageY };
+    if (!gamePause) {
+        if (gameOver) return;
+        if (currentShape.checkBottom()) {
+            currentShape.y += 1;
+        } else {
+            for (let k = 0; k < currentShape.template.length; k++) {
+                for (let l = 0; l < currentShape.template.length; l++) {
+                    if (currentShape.template[k][l] == 0) continue;
+                    const currentTruncePositionXY = currentShape.getTruncedPosition();
+                    gameMap[currentTruncePositionXY.y + l][currentTruncePositionXY.x + k] = { imageX: currentShape.imageX, imageY: currentShape.imageY };
+                }
             }
+            deleteCompleteRows();
+            currentShape = nextShape;
+            nextShape = getRandomShape();
+            if (!currentShape.checkBottom()) {
+                gameOver = true;
+            }
+            score += 100;
         }
-        deleteCompleteRows();
-        currentShape = nextShape;
-        nextShape = getRandomShape();
-        if (!currentShape.checkBottom()) {
-            gameOver = true;
-        }
-        score += 100;
     }
 };
 
@@ -321,18 +328,40 @@ const drawGameOver = () => {
     ctx.font = "36px Silkscreen";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    ctx.fillText("Game Over !!", canvas.width / 2, canvas.height / 2);
+    ctx.fillText(textGameOver, canvas.width / 2, canvas.height / 2);
 };
 
+const drawPause = () => {
+    // Draw Background Alpha Black
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Text "Pause"
+    ctx.globalAlpha = 1.0;
+    ctx.font = "36px Silkscreen";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText(textPause, canvas.width / 2, canvas.height / 2);
+}
+
 const draw = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBackground();
-    drawSquares();
-    drawCurrentTetris();
-    drawNextShape();
-    drawScore();
-    if (gameOver) {
-        drawGameOver();
+    if (!gamePause) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBackground();
+        drawSquares();
+        drawCurrentTetris();
+        drawNextShape();
+        drawScore();
+        if (gameOver) {
+            drawGameOver();
+        }
+    }
+};
+
+const setPause = () => {
+    gamePause = !gamePause;
+    if (gamePause) {
+        drawPause();
     }
 };
 
@@ -355,15 +384,25 @@ const resetVars = () => {
     currentShape = getRandomShape();
     nextShape = getRandomShape();
     gameMap = initialTwoDArr;
+
+    // set pause to false
+    gamePause = false;
 };
 
 // Add Event 'Keydown' for play game
 window.addEventListener("keydown", (event) => {
-    if (event.keyCode == 37) currentShape.moveLeft();   // key 'left' for move to left
-    else if (event.keyCode == 38) currentShape.changeRotation();    // key 'up' for Tetris rotation
-    else if (event.keyCode == 39) currentShape.moveRight(); // key 'right' for move to bottom
-    else if (event.keyCode == 40) currentShape.moveBottom();    // key 'down' for move to bottom
-    else if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
+    if (gameOver) {
+        if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
+    } else {
+        if (!gamePause) {
+            if (event.keyCode == 37) currentShape.moveLeft();   // key 'left' for move to left
+            else if (event.keyCode == 38) currentShape.changeRotation();    // key 'up' for Tetris rotation
+            else if (event.keyCode == 39) currentShape.moveRight(); // key 'right' for move to bottom
+            else if (event.keyCode == 40) currentShape.moveBottom();    // key 'down' for move to bottom
+            else if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
+        }
+        if (event.keyCode == 32) setPause();  // key 'spacebar' for pause/continue game
+    }
 });
 
 // Add Event 'refresh' button click
