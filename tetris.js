@@ -73,7 +73,7 @@ class Tetris {
         }
     }
 
-    changeRotation() {
+    clockwiseRotation() {
         let tempTemplate = [];
         for (let i = 0; i < this.template.length; i++)
             tempTemplate[i] = this.template[i].slice();
@@ -88,6 +88,37 @@ class Tetris {
                 this.template[i][last] = this.template[last][last - offset];    // right = bottom
                 this.template[last][last - offset] = this.template[last - offset][first];   // bottom = left
                 this.template[last - offset][first] = top;  // left = top
+            }
+        }
+
+        for (let i = 0; i < this.template.length; i++) {
+            for (let j = 0; j < this.template.length; j++) {
+                if (this.template[i][j] == 0) continue;
+                let realX = i + this.getTruncedPosition().x;
+                let realY = j + this.getTruncedPosition().y;
+                if (realX < 0 || realX >= squareCountX || realY < 0 || realY >= squareCountY) {
+                    this.template = tempTemplate;
+                    return false;
+                }
+            }
+        }
+    }
+
+    counterClockwiseRotation() {
+        let tempTemplate = [];
+        for (let i = 0; i < this.template.length; i++)
+            tempTemplate[i] = this.template[i].slice();
+        let n = this.template.length;
+        for (let layer = 0; layer < n / 2; layer++) {
+            let first = layer;
+            let last = n - 1 - layer;
+            for (let i = first; i < last; i++) {
+                let offset = i - first;
+                let top = this.template[first][i];
+                this.template[first][i] = this.template[last - offset][first];  // top = left
+                this.template[last - offset][first] = this.template[last][last - offset];   // left = bottom
+                this.template[last][last - offset] = this.template[i][last];    // bottom = right
+                this.template[i][last] = top;   // right = top
             }
         }
 
@@ -298,7 +329,8 @@ const drawSquares = () => {
 };
 
 const drawNextShape = () => {
-    nctx.fillStyle = "white";
+    // nctx.fillStyle = "#000061";
+    nctx.fillStyle = "black";
     nctx.fillRect(0, 0, nextShapeCanvas.width, nextShapeCanvas.height);
     for (let i = 0; i < nextShape.template.length; i++) {
         for (let j = 0; j < nextShape.template.length; j++) {
@@ -375,6 +407,7 @@ const draw = () => {
 };
 
 const setPause = () => {
+    // set pause or continue
     gamePause = !gamePause;
     if (gamePause) {
         drawPause();
@@ -412,10 +445,12 @@ window.addEventListener("keydown", (event) => {
     } else {
         if (!gamePause) {
             if (event.keyCode == 37) currentShape.moveLeft();   // key 'left' for move to left
-            else if (event.keyCode == 38) currentShape.changeRotation();    // key 'up' for Tetris rotation
+            else if (event.keyCode == 38) currentShape.clockwiseRotation();    // key 'up' for Tetris rotation
             else if (event.keyCode == 39) currentShape.moveRight(); // key 'right' for move to bottom
             else if (event.keyCode == 40) currentShape.moveBottom();    // key 'down' for move to bottom
             else if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
+            else if (event.keyCode == 68) currentShape.clockwiseRotation();    // key 'd' for Tetris rotation
+            else if (event.keyCode == 83) currentShape.counterClockwiseRotation();    // key 's' for Tetris rotation
         }
         if (event.keyCode == 32) setPause();  // key 'spacebar' for pause/continue game
     }
@@ -423,6 +458,7 @@ window.addEventListener("keydown", (event) => {
 
 // Add Event 'refresh' button click
 btnRefresh.addEventListener("click", () => {
+    btnRefresh.blur();
     resetVars();
 });
 
