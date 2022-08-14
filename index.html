@@ -44,6 +44,11 @@
             color: white;
         }
 
+        .next-tetris-canvas {
+            margin: auto;
+            width: 150px;
+        }
+
         .score-text {
             font-size: 30px;
             color: white;
@@ -120,7 +125,7 @@
         <div class="grid-item grid-next-tetris">
             <fieldset class="group-body">
                 <legend class="group-title">Next:</legend>
-                <div style="margin: auto; width:150px;">
+                <div class="next-tetris-canvas">
                     <canvas id="nextShapeCanvas" width="150" height="150"> </canvas>
                 </div>
             </fieldset>
@@ -131,14 +136,18 @@
             <fieldset class="group-body">
                 <legend class="group-title">control:</legend>
                 <div>
-                    <div class="control-item"><span class="control-button">&#8593;</span> <i class="fa-solid fa-rotate-right"></i> rotate</div>
+                    <div class="control-item"><span class="control-button">&#8593;</span> <i
+                            class="fa-solid fa-rotate-right"></i> rotate</div>
                     <div class="control-item"><span class="control-button">&#8594;</span> move right</div>
                     <div class="control-item"><span class="control-button">&#8592;</span> move left</div>
                     <div class="control-item"><span class="control-button">&#8595;</span> move down</div>
-                    <div class="control-item"><span class="control-button">D</span> <i class="fa-solid fa-rotate-right"></i> rotate</div>
-                    <div class="control-item"><span class="control-button">S</span> <i class="fa-solid fa-rotate-left"></i> rotate</div>
+                    <div class="control-item"><span class="control-button">D</span> <i
+                            class="fa-solid fa-rotate-right"></i> rotate</div>
+                    <div class="control-item"><span class="control-button">S</span> <i
+                            class="fa-solid fa-rotate-left"></i> rotate</div>
                     <div class="control-item"><span class="control-button">R</span> Re-start</div>
-                    <div class="control-item"><span class="control-button control-button-big">Space bar</span><br/>pause/continue</div>
+                    <div class="control-item"><span class="control-button control-button-big">Space
+                            bar</span><br />pause/continue</div>
                 </div>
             </fieldset>
             <div class="button-area">
