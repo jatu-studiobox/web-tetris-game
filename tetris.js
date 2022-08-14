@@ -209,6 +209,7 @@ let score;
 let initialTwoDArr;
 let whiteLineThickness = 3;
 let gamePause;
+let firstLoop;
 
 const gameLoop = () => {
     setInterval(update, 1000 / gameSpeed);
@@ -257,6 +258,7 @@ const update = () => {
                 gameOver = true;
             }
             score += 100;
+            drawNextShape();
         }
     }
 };
@@ -341,8 +343,8 @@ const drawNextShape = () => {
                 nextShape.imageY,
                 imageSquareSize,
                 imageSquareSize,
-                size * i,
-                size * j + size,
+                ((nextShapeCanvas.width / 2) - ((nextShape.template.length * size) / 2) + (size * i)),
+                ((nextShapeCanvas.width / 2) - ((nextShape.template.length * size) / 2) + (size * j)),
                 size,
                 size
             );
@@ -398,7 +400,11 @@ const draw = () => {
         drawBackground();
         drawSquares();
         drawCurrentTetris();
-        drawNextShape();
+        // Check first loop
+        if (firstLoop) {
+            drawNextShape();
+            firstLoop = false;
+        }
         drawScore();
         if (gameOver) {
             drawGameOver();
@@ -436,6 +442,9 @@ const resetVars = () => {
 
     // set pause to false
     gamePause = false;
+
+    // set first loop
+    firstLoop = true;
 };
 
 // Add Event 'Keydown' for play game
