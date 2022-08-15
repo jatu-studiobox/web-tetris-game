@@ -499,9 +499,9 @@ const closeModalSettings = () => {
     if (openedDialogSettings) {
         setModalSettings(false);
         // case game not over, then set
-        if (!gameOver) {
-            setPause(false); // continue game
-        }
+        // if (!gameOver) {
+        //     setPause(false); // continue game
+        // }
     }
 };
 
@@ -519,33 +519,39 @@ const closeModalController = () => {
     if (openedDialogController) {
         setModalController(false);
         // case game not over, then set
-        if (!gameOver) {
-            setPause(false); // pause game
-        }
+        // if (!gameOver) {
+        //     setPause(false); // pause game
+        // }
     }
 };
 
 // Add Event 'Keydown' for play game
 window.addEventListener("keydown", (event) => {
-    if (!gameOver) {
-        if (!gamePause) {
-            if (event.keyCode == 37) currentShape.moveLeft();   // key 'left' for move to left
-            else if (event.keyCode == 38) currentShape.clockwiseRotation();    // key 'up' for Tetris rotation
-            else if (event.keyCode == 39) currentShape.moveRight(); // key 'right' for move to bottom
-            else if (event.keyCode == 40) currentShape.moveBottom();    // key 'down' for move to bottom
-            else if (event.keyCode == 68) currentShape.clockwiseRotation();    // key 'd' for Tetris rotation
-            else if (event.keyCode == 83) currentShape.counterClockwiseRotation();    // key 's' for Tetris rotation
+    if (!openedDialogController && !openedDialogSettings) {
+        if (!gameOver) {
+            if (!gamePause) {
+                if (event.keyCode == 37) currentShape.moveLeft();   // key 'left' for move to left
+                else if (event.keyCode == 38) currentShape.clockwiseRotation();    // key 'up' for Tetris rotation
+                else if (event.keyCode == 39) currentShape.moveRight(); // key 'right' for move to bottom
+                else if (event.keyCode == 40) currentShape.moveBottom();    // key 'down' for move to bottom
+                else if (event.keyCode == 68) currentShape.clockwiseRotation();    // key 'd' for Tetris rotation
+                else if (event.keyCode == 83) currentShape.counterClockwiseRotation();    // key 's' for Tetris rotation
+            }
+            if (event.keyCode == 32 && !openedDialogController && !openedDialogSettings) {  // key 'spacebar' for pause/continue game
+                setPause(!gamePause);;
+            }
         }
-        if (event.keyCode == 32 && !openedDialogController && !openedDialogSettings) {  // key 'spacebar' for pause/continue game
-            setPause(!gamePause);;
-        }
+        if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
+        if (event.keyCode == 67) openModalController(); // key 'c' for open controller dialog
+        if (event.keyCode == 69) openModalSettings();  // key 'e' for open settings dialog
     }
-    if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
-    if (event.keyCode == 67) openModalController(); // key 'c' for open controller dialog
-    if (event.keyCode == 69) openModalSettings();  // key 'e' for open settings dialog
-    if (event.keyCode == 88) { // key 'x' for close all dialog
-        closeModalController();
-        closeModalSettings();
+
+    if (openedDialogController) {
+        if (event.keyCode == 88) closeModalController();    // key 'x' for close controller dialog
+    }
+
+    if (openedDialogSettings) {
+        if (event.keyCode == 88) closeModalSettings();  // key 'x' for close settings dialog
     }
 });
 
