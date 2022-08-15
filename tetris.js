@@ -217,6 +217,8 @@ let initialTwoDArr;
 let whiteLineThickness = 3;
 let gamePause;
 let firstLoop;
+let openedDialogController;
+let openedDialogSettings;
 let deletedRows = 0;
 
 const gameLoop = () => {
@@ -430,9 +432,9 @@ const draw = () => {
     }
 };
 
-const setPause = () => {
+const setPause = (pauseValue) => {
     // set pause or continue
-    gamePause = !gamePause;
+    gamePause = pauseValue;
     if (gamePause) {
         drawPause();
     }
@@ -461,12 +463,66 @@ const resetVars = () => {
     // set pause to false
     gamePause = false;
 
+    // set dialog open to false
+    openedDialogController = false;
+    openedDialogSettings = false;
+
     // set first loop
     firstLoop = true;
 };
 
 const blurButton = (button) => {
     button.blur();
+};
+
+const setModalSettings = (setValue) => {
+    openedDialogSettings = setValue;
+    modalSettings.style.display = setValue ? "block" : "none";
+};
+
+const setModalController = (setValue) => {
+    openedDialogController = setValue;
+    modalController.style.display = setValue ? "block" : "none";
+};
+
+const openModalSettings = () => {
+    if (!openedDialogSettings) {
+        setModalSettings(true);
+        // case game not over, then set
+        if (!gameOver) {
+            setPause(true); // pause game
+        }
+    }
+};
+
+const closeModalSettings = () => {
+    if (openedDialogSettings) {
+        setModalSettings(false);
+        // case game not over, then set
+        if (!gameOver) {
+            setPause(false); // continue game
+        }
+    }
+};
+
+const openModalController = () => {
+    if (!openedDialogController) {
+        setModalController(true);
+        // case game not over, then set
+        if (!gameOver) {
+            setPause(true); // pause game
+        }
+    }
+};
+
+const closeModalController = () => {
+    if (openedDialogController) {
+        setModalController(false);
+        // case game not over, then set
+        if (!gameOver) {
+            setPause(false); // pause game
+        }
+    }
 };
 
 // Add Event 'Keydown' for play game
@@ -480,14 +536,16 @@ window.addEventListener("keydown", (event) => {
             else if (event.keyCode == 68) currentShape.clockwiseRotation();    // key 'd' for Tetris rotation
             else if (event.keyCode == 83) currentShape.counterClockwiseRotation();    // key 's' for Tetris rotation
         }
-        if (event.keyCode == 32) setPause();  // key 'spacebar' for pause/continue game
+        if (event.keyCode == 32 && !openedDialogController && !openedDialogSettings) {  // key 'spacebar' for pause/continue game
+            setPause(!gamePause);;
+        }
     }
     if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
-    if (event.keyCode == 67) btnOpenController.click(); // key 'c' for open controller dialog
-    if (event.keyCode == 69) btnOpenSetttings.click(); // key 'e' for open settings dialog
-    if (event.keyCode == 88)  { // key 'x' for close all dialog
-        btnCloseController.click();
-        btnCloseSettings.click();
+    if (event.keyCode == 67) openModalController(); // key 'c' for open controller dialog
+    if (event.keyCode == 69) openModalSettings();  // key 'e' for open settings dialog
+    if (event.keyCode == 88) { // key 'x' for close all dialog
+        closeModalController();
+        closeModalSettings();
     }
 });
 
@@ -499,22 +557,22 @@ btnRefresh.addEventListener("click", () => {
 
 btnOpenSetttings.addEventListener("click", () => {
     blurButton(btnOpenSetttings);
-    modalSettings.style.display = "block";
+    openModalSettings();
 });
 
 btnCloseSettings.addEventListener("click", () => {
     blurButton(btnCloseSettings);
-    modalSettings.style.display = "none";
+    closeModalSettings();
 });
 
 btnOpenController.addEventListener("click", () => {
     blurButton(btnOpenController);
-    modalController.style.display = "block";
+    openModalController();
 });
 
 btnCloseController.addEventListener("click", () => {
     blurButton(btnCloseController);
-    modalController.style.display = "none";
+    closeModalController();
 });
 
 resetVars();
