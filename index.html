@@ -10,113 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/b71181a14c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css" />
     <title>Tetris Game</title>
-    <style>
-        body {
-            background-color: black;
-            font-family: 'Silkscreen', cursive;
-        }
-
-        .grid-container {
-            display: inline-grid;
-            grid-template-columns: auto auto;
-            padding: 0px;
-        }
-
-        .grid-item {
-            background-color: #000061;
-            /* border: 1px solid rgba(0, 0, 0, 0.8); */
-            padding: 10px;
-            font-size: 22px;
-        }
-
-        /* .playing-area {
-            grid-row: 1 / 3;
-        } */
-
-        .group-body {
-            border: 3px solid white;
-            border-radius: 8px;
-            padding: 0 10px 10px;
-        }
-
-        .group-title {
-            color: white;
-        }
-
-        .next-tetris-canvas {
-            margin: auto;
-            width: 140px;
-        }
-
-        .score-text {
-            font-size: 22px;
-            color: white;
-            text-align: right;
-        }
-
-        .imageTemplate {
-            display: none;
-        }
-
-        .button-area {
-            margin-top: 10px;
-        }
-
-        button.refresh {
-            border-radius: 8px;
-            background-color: gray;
-            cursor: pointer;
-            font-size: 20px;
-            font-family: 'Silkscreen', cursive;
-        }
-
-        button.refresh:hover {
-            background-color: #bca0dc;
-        }
-
-        button.refresh:active {
-            background-color: purple;
-        }
-
-        .control-button {
-            color: black;
-            border: 1px solid silver;
-            width: 22px;
-            text-align: center;
-            display: inline-block;
-            border-radius: 2px;
-            background-color: silver;
-        }
-
-        .control-button-big {
-            width: 90px;
-        }
-
-        .control-item {
-            font-size: 12px;
-            margin-top: 3px;
-            margin-bottom: 3px;
-            color: white;
-        }
-
-        /* button.refresh {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background-color: gray;
-            cursor: pointer;
-            border: 0px;
-        }
-
-        button.refresh:hover {
-            background-color: #bca0dc;
-        }
-
-        button.refresh:active {
-            background-color: purple;
-        } */
-    </style>
 </head>
 
 <body>
@@ -133,36 +28,54 @@
                 <legend class="group-title">Score:</legend>
                 <div class="score-text" id="scoreText">0</div>
             </fieldset>
-            <fieldset class="group-body">
-                <legend class="group-title">control:</legend>
+            <div class="button-area">
+                <button id="btnRefresh" type="button" title="Re-start"><i class="fa-solid fa-retweet"></i> <u>R</u>e-start</button>
+            </div>
+            <div class="button-area">
+                <button id="btnOpenSetttings" type="button" title="Settings"><i class="fa-solid fa-gear"></i> S<u>e</u>ttings</button>
+            </div>
+            <div class="button-area">
+                <button id="btnOpenController" type="button" title="Control"><i class="fa-solid fa-gamepad"></i> <u>C</u>ontrol</button>
+            </div>
+        </div>
+    </div>
+    <!-- The Modal -->
+    <div id="modalSettings" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <fieldset class="modal-group-body">
+                <legend class="group-title modal-title"><i class="fa-solid fa-gear"></i> Settings:</legend>
                 <div>
-                    <div class="control-item"><span class="control-button">&#8593;</span> rotate <i class="fa-solid fa-rotate-right"></i></div>
-                    <div class="control-item"><span class="control-button">&#8594;</span> move right</div>
-                    <div class="control-item"><span class="control-button">&#8592;</span> move left</div>
-                    <div class="control-item"><span class="control-button">&#8595;</span> move down</div>
+                    Settings
+                </div>
+            </fieldset>
+            <div class="modal-footer-area">
+                <button id="btnCloseSettings" type="button" title="Close"><i class="fa-solid fa-circle-xmark"></i> Close (<u>X</u>)</button>
+            </div>
+        </div>
+    </div>
+    <div id="modalController" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <fieldset class="modal-group-body">
+                <legend class="group-title modal-title"><i class="fa-solid fa-gamepad"></i>controller:</legend>
+                <div>
+                    <div class="control-item"><span class="control-button"><i class="fa-solid fa-up-long"></i></span> rotate <i class="fa-solid fa-rotate-right"></i></div>
+                    <div class="control-item"><span class="control-button"><i class="fa-solid fa-right-long"></i></span> move right</div>
+                    <div class="control-item"><span class="control-button"><i class="fa-solid fa-left-long"></i></span> move left</div>
+                    <div class="control-item"><span class="control-button"><i class="fa-solid fa-down-long"></i></span> move down</div>
                     <div class="control-item"><span class="control-button">D</span> rotate <i class="fa-solid fa-rotate-right"></i></div>
                     <div class="control-item"><span class="control-button">S</span> rotate <i class="fa-solid fa-rotate-left"></i></div>
                     <div class="control-item"><span class="control-button">R</span> Re-start</div>
-                    <div class="control-item"><span class="control-button control-button-big">Space bar</span><br />pause/continue</div>
+                    <div class="control-item"><span class="control-button control-button-big">Space bar</span> pause/continue</div>
                 </div>
             </fieldset>
-            <div class="button-area">
-                <button id="btnRefresh" type="button" class="refresh" title="Re-start"><i
-                        class="fa-solid fa-retweet"></i>Re-start</button>
+            <div class="modal-footer-area">
+                <button id="btnCloseController" type="button" title="Close"><i class="fa-solid fa-circle-xmark"></i> Close (<u>X</u>)</button>
             </div>
-
-            <!-- <button class="refresh" id="btnRefresh" title="refresh">
-                <svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
-                    <use class="ytp-svg-shadow" xlink:href="#ytp-id-180"></use>
-                    <path class="ytp-svg-fill" fill="#ffffff"
-                        d="M 18,11 V 7 l -5,5 5,5 v -4 c 3.3,0 6,2.7 6,6 0,3.3 -2.7,6 -6,6 -3.3,0 -6,-2.7 -6,-6 h -2 c 0,4.4 3.6,8 8,8 4.4,0 8,-3.6 8,-8 0,-4.4 -3.6,-8 -8,-8 z"
-                        id="ytp-id-180"></path>
-                </svg>
-                restart
-            </button> -->
         </div>
     </div>
-    <img id="image" src="rotations.png" class="imageTemplate" />
+    <img id="image" src="rotations.png" class="imageTemplate" title="image temp" />
     <script src="tetris.js"></script>
 </body>
 

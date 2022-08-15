@@ -142,6 +142,12 @@ const nextShapeCanvas = document.getElementById("nextShapeCanvas");
 const scoreText = document.getElementById("scoreText");
 const image = document.getElementById("image");
 const btnRefresh = document.getElementById("btnRefresh");
+const modalSettings = document.getElementById("modalSettings");
+const btnOpenSetttings = document.getElementById("btnOpenSetttings");
+const btnCloseSettings = document.getElementById("btnCloseSettings");
+const modalController = document.getElementById("modalController");
+const btnOpenController = document.getElementById("btnOpenController");
+const btnCloseController = document.getElementById("btnCloseController");
 
 const imageSquareSize = 25;
 const size = 30;
@@ -231,7 +237,7 @@ const deleteCompleteRows = () => {
             // Sum deleted rows, when complete row
             deletedRows += 1;
             // score += scoreDeletedRow;
-            
+
             for (let k = i; k > 0; k--) {
                 gameMap[k] = gameMap[k - 1];
             }
@@ -246,7 +252,6 @@ const deleteCompleteRows = () => {
     if (deletedRows > 0) {
         console.log("deletedRows: ", deletedRows);
         score += scoreDeletedRow * deletedRows * gameSpeed;
-        console.log("score: ", score);
         deletedRows = 0;
     }
 };
@@ -460,21 +465,29 @@ const resetVars = () => {
     firstLoop = true;
 };
 
+const blurButton = (button) => {
+    button.blur();
+};
+
 // Add Event 'Keydown' for play game
 window.addEventListener("keydown", (event) => {
-    if (gameOver) {
-        if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
-    } else {
+    if (!gameOver) {
         if (!gamePause) {
             if (event.keyCode == 37) currentShape.moveLeft();   // key 'left' for move to left
             else if (event.keyCode == 38) currentShape.clockwiseRotation();    // key 'up' for Tetris rotation
             else if (event.keyCode == 39) currentShape.moveRight(); // key 'right' for move to bottom
             else if (event.keyCode == 40) currentShape.moveBottom();    // key 'down' for move to bottom
-            else if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
             else if (event.keyCode == 68) currentShape.clockwiseRotation();    // key 'd' for Tetris rotation
             else if (event.keyCode == 83) currentShape.counterClockwiseRotation();    // key 's' for Tetris rotation
         }
         if (event.keyCode == 32) setPause();  // key 'spacebar' for pause/continue game
+    }
+    if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
+    if (event.keyCode == 67) btnOpenController.click(); // key 'c' for open controller dialog
+    if (event.keyCode == 69) btnOpenSetttings.click(); // key 'e' for open settings dialog
+    if (event.keyCode == 88)  { // key 'x' for close all dialog
+        btnCloseController.click();
+        btnCloseSettings.click();
     }
 });
 
@@ -482,6 +495,26 @@ window.addEventListener("keydown", (event) => {
 btnRefresh.addEventListener("click", () => {
     btnRefresh.blur();
     resetVars();
+});
+
+btnOpenSetttings.addEventListener("click", () => {
+    blurButton(btnOpenSetttings);
+    modalSettings.style.display = "block";
+});
+
+btnCloseSettings.addEventListener("click", () => {
+    blurButton(btnCloseSettings);
+    modalSettings.style.display = "none";
+});
+
+btnOpenController.addEventListener("click", () => {
+    blurButton(btnOpenController);
+    modalController.style.display = "block";
+});
+
+btnCloseController.addEventListener("click", () => {
+    blurButton(btnCloseController);
+    modalController.style.display = "none";
 });
 
 resetVars();
