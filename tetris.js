@@ -155,12 +155,13 @@ const squareCountY = canvas.height / size;
 
 // Constant section
 const textGameOver = "Game Over!!";
-const textPressNewGame = ["Press 'R'", "for new game"];
+const textPressNewGame = ["Press 'R'", "to new game"];
 const textPause = "Pause";
-const textPressContinue = ["Press Space Bar", "for continue"];
+const textPressContinue = ["Press Space Bar", "to continue"];
 
 // Score section
-const scoreDeletedRow = 1000;
+const scorePositionTetris = 50;
+const scoreDeletedRow = 500;
 
 // Initial tetris shapes
 const shapes = [
@@ -210,6 +211,7 @@ let initialTwoDArr;
 let whiteLineThickness = 3;
 let gamePause;
 let firstLoop;
+let deletedRows = 0;
 
 const gameLoop = () => {
     setInterval(update, 1000 / gameSpeed);
@@ -225,7 +227,11 @@ const deleteCompleteRows = () => {
         }
         if (isComplete) {
             console.log("complete row");
-            score += scoreDeletedRow;
+
+            // Sum deleted rows, when complete row
+            deletedRows += 1;
+            // score += scoreDeletedRow;
+            
             for (let k = i; k > 0; k--) {
                 gameMap[k] = gameMap[k - 1];
             }
@@ -235,6 +241,13 @@ const deleteCompleteRows = () => {
             }
             gameMap[0] = temp;
         }
+    }
+    // check there are deleted rows, then sum score
+    if (deletedRows > 0) {
+        console.log("deletedRows: ", deletedRows);
+        score += scoreDeletedRow * deletedRows * gameSpeed;
+        console.log("score: ", score);
+        deletedRows = 0;
     }
 };
 
@@ -257,7 +270,7 @@ const update = () => {
             if (!currentShape.checkBottom()) {
                 gameOver = true;
             }
-            score += 100;
+            score += scorePositionTetris * gameSpeed;
             drawNextShape();
         }
     }
