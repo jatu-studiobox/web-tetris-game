@@ -148,16 +148,19 @@ const btnCloseSettings = document.getElementById("btnCloseSettings");
 const modalController = document.getElementById("modalController");
 const btnOpenController = document.getElementById("btnOpenController");
 const btnCloseController = document.getElementById("btnCloseController");
+const settingItems = document.querySelectorAll(".setting-item");
 
 const imageSquareSize = 25;
 const size = 30;
 const framePerSecond = 25;
-const gameSpeed = 1;
+let gameSpeed = 1;
 const displayLineheight = 40;
 const ctx = canvas.getContext("2d");
 const nctx = nextShapeCanvas.getContext("2d");
 const squareCountX = canvas.width / size;
 const squareCountY = canvas.height / size;
+
+let activeSettingItem;
 
 // Constant section
 const textGameOver = "Game Over!!";
@@ -475,19 +478,27 @@ const blurButton = (button) => {
     button.blur();
 };
 
+// function for 'Settings' modal display & status
 const setModalSettings = (setValue) => {
     openedDialogSettings = setValue;
     modalSettings.style.display = setValue ? "block" : "none";
 };
 
+// function for 'Controller' modal display & status
 const setModalController = (setValue) => {
     openedDialogController = setValue;
     modalController.style.display = setValue ? "block" : "none";
 };
 
+// function for open 'Settings' modal
 const openModalSettings = () => {
     if (!openedDialogSettings) {
         setModalSettings(true);
+
+        // when open 'Settings' modal, then set highlight to item 0
+        activeSettingItem = 0;
+        setActiveSettingItem();
+
         // case game not over, then set
         if (!gameOver) {
             setPause(true); // pause game
@@ -495,16 +506,12 @@ const openModalSettings = () => {
     }
 };
 
+// function for close 'Settings' modal
 const closeModalSettings = () => {
-    if (openedDialogSettings) {
-        setModalSettings(false);
-        // case game not over, then set
-        // if (!gameOver) {
-        //     setPause(false); // continue game
-        // }
-    }
+    if (openedDialogSettings) setModalSettings(false);
 };
 
+// function for open 'Controller' modal
 const openModalController = () => {
     if (!openedDialogController) {
         setModalController(true);
@@ -515,14 +522,9 @@ const openModalController = () => {
     }
 };
 
+// function for close 'Controller' modal
 const closeModalController = () => {
-    if (openedDialogController) {
-        setModalController(false);
-        // case game not over, then set
-        // if (!gameOver) {
-        //     setPause(false); // pause game
-        // }
-    }
+    if (openedDialogController) setModalController(false);
 };
 
 // Add Event 'Keydown' for play game
@@ -551,6 +553,24 @@ window.addEventListener("keydown", (event) => {
     }
 
     if (openedDialogSettings) {
+        if (event.keyCode == 38) {  // key 'up' for move to above item
+            // move to previous active index
+            activeSettingItem -= 1;
+
+            // activeSettingItem lower min index
+            if (activeSettingItem < 0) activeSettingItem += 1;
+
+            setActiveSettingItem();
+        };
+        if (event.keyCode == 40) {  // key 'down' for move to below item
+            // move to next active index
+            activeSettingItem += 1;
+
+            // activeSettingItem more than max index
+            if (activeSettingItem > (settingItems.length - 1)) activeSettingItem -= 1;
+
+            setActiveSettingItem();
+        }
         if (event.keyCode == 88) closeModalSettings();  // key 'x' for close settings dialog
     }
 });
@@ -580,6 +600,36 @@ btnCloseController.addEventListener("click", () => {
     blurButton(btnCloseController);
     closeModalController();
 });
+
+const setActiveSettingItem = () => {
+    for (let i = 0; i < settingItems.length; i++) {
+        // Gathering tag 'i' cursor element
+        let cursor = settingItems[i].querySelector("i");
+        if (i === activeSettingItem) {
+            settingItems[i].classList.add("setting-item-highlight");
+            cursor.style.display = "inline-block";
+        } else {
+            settingItems[i].classList.remove("setting-item-highlight");
+            cursor.style.display = "none";
+        }
+    }
+}
+
+// Prepare 'Setting Items' actions
+const prepareSettingItems = () => {
+    // Set default active item at index 0
+    activeSettingItem = 0;
+
+    // loop for add event mouseover
+    for (let i = 0; i < settingItems.length; i++) {
+        settingItems[i].addEventListener("mouseover", (event) => {
+            activeSettingItem = i;
+            setActiveSettingItem();
+        });
+    }
+}
+
+prepareSettingItems();
 
 resetVars();
 gameLoop();

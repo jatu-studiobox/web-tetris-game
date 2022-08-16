@@ -151,3 +151,24 @@ button:active {
     text-decoration: none;
     cursor: pointer;
 }
+
+.setting-item {
+    color: gray;
+}
+
+.setting-item-highlight {
+    color: white;
+}
+
+.game-speed-item {
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+    cursor: pointer;
+    border: solid 2px #000061;
+    border-radius: 3px;
+}
+
+.game-speed-item-highlight {
+    border: solid 2px white;
+}
