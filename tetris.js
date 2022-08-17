@@ -149,6 +149,8 @@ const modalController = document.getElementById("modalController");
 const btnOpenController = document.getElementById("btnOpenController");
 const btnCloseController = document.getElementById("btnCloseController");
 const settingItems = document.querySelectorAll(".setting-item");
+const gameSpeedItems = document.querySelectorAll(".game-speed-item");
+const btnSaveSettings = document.getElementById("btnSaveSettings");
 
 const imageSquareSize = 25;
 const size = 30;
@@ -159,8 +161,12 @@ const ctx = canvas.getContext("2d");
 const nctx = nextShapeCanvas.getContext("2d");
 const squareCountX = canvas.width / size;
 const squareCountY = canvas.height / size;
+let drawIntervalId;
+let updateIntervalId;
+
 
 let activeSettingItem;
+let gameSpeedTemp;
 
 // Constant section
 const textGameOver = "Game Over!!";
@@ -225,8 +231,15 @@ let openedDialogSettings;
 let deletedRows = 0;
 
 const gameLoop = () => {
-    setInterval(update, 1000 / gameSpeed);
-    setInterval(draw, 1000 / framePerSecond);
+    if (updateIntervalId) clearInterval(updateIntervalId);
+    if (drawIntervalId) clearInterval(drawIntervalId);
+    updateIntervalId = setInterval(update, 1000 / gameSpeed);
+    drawIntervalId = setInterval(draw, 1000 / framePerSecond);
+};
+
+const clearLoop = () => {
+    clearInterval(updateIntervalId);
+    clearInterval(drawIntervalId);
 };
 
 const deleteCompleteRows = () => {
@@ -474,6 +487,11 @@ const resetVars = () => {
     firstLoop = true;
 };
 
+const saveSettings = () => {
+    console.log("Save settings...");
+    gameSpeed = gameSpeedTemp;
+};
+
 const blurButton = (button) => {
     button.blur();
 };
@@ -498,6 +516,10 @@ const openModalSettings = () => {
         // when open 'Settings' modal, then set highlight to item 0
         activeSettingItem = 0;
         setActiveSettingItem();
+
+        // highlight game speed setting
+        gameSpeedTemp = gameSpeed;
+        setActiveGameSpeedHighLight();
 
         // case game not over, then set
         if (!gameOver) {
@@ -527,6 +549,59 @@ const closeModalController = () => {
     if (openedDialogController) setModalController(false);
 };
 
+const setActiveGameSpeedHighLight = () => {
+    for (let i = 0; i < gameSpeedItems.length; i++) {
+        gameSpeedItems[i].classList.remove("game-speed-item-highlight-active");
+        gameSpeedItems[i].classList.remove("game-speed-item-highlight-not-active");
+        if (gameSpeedItems[i].innerText === gameSpeedTemp.toString()) {
+            const classHighLight = activeSettingItem === 0 ? "game-speed-item-highlight-active" : "game-speed-item-highlight-not-active";
+            gameSpeedItems[i].classList.add(classHighLight);
+        }
+    }
+};
+
+const prepareGameSpeedSetting = () => {
+    // loop for add event mouseover
+    for (let i = 0; i < gameSpeedItems.length; i++) {
+        gameSpeedItems[i].addEventListener("click", (event) => {
+            if (activeSettingItem === 0) {
+                gameSpeedTemp = parseInt(gameSpeedItems[i].innerText);
+                setActiveGameSpeedHighLight();
+            }
+        });
+    }
+};
+
+// function set 'active' or 'highlight' setting item
+const setActiveSettingItem = () => {
+    for (let i = 0; i < settingItems.length; i++) {
+        // Gathering tag 'i' cursor element
+        let cursor = settingItems[i].querySelector("i");
+        if (i === activeSettingItem) {
+            settingItems[i].classList.add("setting-item-highlight");
+            cursor.style.display = "inline-block";
+        } else {
+            settingItems[i].classList.remove("setting-item-highlight");
+            cursor.style.display = "none";
+        }
+    }
+};
+
+// function repare 'Setting Items' actions
+const prepareSettingItems = () => {
+    // Set default active item at index 0
+    activeSettingItem = 0;
+
+    // loop for add event mouseover
+    for (let i = 0; i < settingItems.length; i++) {
+        settingItems[i].addEventListener("mouseover", (event) => {
+            activeSettingItem = i;
+            setActiveSettingItem();
+            setActiveGameSpeedHighLight();
+        });
+    }
+};
+
 // Add Event 'Keydown' for play game
 window.addEventListener("keydown", (event) => {
     if (!openedDialogController && !openedDialogSettings) {
@@ -549,7 +624,7 @@ window.addEventListener("keydown", (event) => {
     }
 
     if (openedDialogController) {
-        if (event.keyCode == 88) closeModalController();    // key 'x' for close controller dialog
+        if (event.keyCode == 88) closeModalController();    // key 'x' for exit controller dialog
     }
 
     if (openedDialogSettings) {
@@ -561,6 +636,7 @@ window.addEventListener("keydown", (event) => {
             if (activeSettingItem < 0) activeSettingItem += 1;
 
             setActiveSettingItem();
+            setActiveGameSpeedHighLight();
         };
         if (event.keyCode == 40) {  // key 'down' for move to below item
             // move to next active index
@@ -570,8 +646,30 @@ window.addEventListener("keydown", (event) => {
             if (activeSettingItem > (settingItems.length - 1)) activeSettingItem -= 1;
 
             setActiveSettingItem();
+            setActiveGameSpeedHighLight();
         }
-        if (event.keyCode == 88) closeModalSettings();  // key 'x' for close settings dialog
+
+        if (activeSettingItem === 0) {  // if setting item is at 'Game speed'
+            if (event.keyCode == 37 && gameSpeedTemp > 1) {
+                gameSpeedTemp -= 1;
+                setActiveGameSpeedHighLight();
+            }
+
+            if (event.keyCode == 39 && gameSpeedTemp < gameSpeedItems.length) {
+                gameSpeedTemp += 1;
+                setActiveGameSpeedHighLight();
+            }
+        }
+
+        if (event.keyCode == 83) {  // key 's' for save settings
+            saveSettings();
+            closeModalSettings();
+            clearLoop();
+            resetVars();
+            gameLoop();
+        }
+
+        if (event.keyCode == 88) closeModalSettings();  // key 'x' for exit settings dialog
     }
 });
 
@@ -601,35 +699,18 @@ btnCloseController.addEventListener("click", () => {
     closeModalController();
 });
 
-const setActiveSettingItem = () => {
-    for (let i = 0; i < settingItems.length; i++) {
-        // Gathering tag 'i' cursor element
-        let cursor = settingItems[i].querySelector("i");
-        if (i === activeSettingItem) {
-            settingItems[i].classList.add("setting-item-highlight");
-            cursor.style.display = "inline-block";
-        } else {
-            settingItems[i].classList.remove("setting-item-highlight");
-            cursor.style.display = "none";
-        }
-    }
-}
-
-// Prepare 'Setting Items' actions
-const prepareSettingItems = () => {
-    // Set default active item at index 0
-    activeSettingItem = 0;
-
-    // loop for add event mouseover
-    for (let i = 0; i < settingItems.length; i++) {
-        settingItems[i].addEventListener("mouseover", (event) => {
-            activeSettingItem = i;
-            setActiveSettingItem();
-        });
-    }
-}
+// Add Event 'refresh' button click
+btnSaveSettings.addEventListener("click", () => {
+    saveSettings();
+    blurButton(btnSaveSettings);
+    closeModalSettings();
+    resetVars();
+    clearLoop();
+    gameLoop();
+});
 
 prepareSettingItems();
+prepareGameSpeedSetting();
 
 resetVars();
 gameLoop();
