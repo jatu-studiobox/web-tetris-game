@@ -136,10 +136,11 @@ class Tetris {
     }
 }
 
-// Game config
+// Gathering html element
 const canvas = document.getElementById("canvas");
 const nextShapeCanvas = document.getElementById("nextShapeCanvas");
 const scoreText = document.getElementById("scoreText");
+const speedText = document.getElementById("speedText");
 const image = document.getElementById("image");
 const btnRefresh = document.getElementById("btnRefresh");
 const modalSettings = document.getElementById("modalSettings");
@@ -152,6 +153,7 @@ const settingItems = document.querySelectorAll(".setting-item");
 const gameSpeedItems = document.querySelectorAll(".game-speed-item");
 const btnSaveSettings = document.getElementById("btnSaveSettings");
 
+// Game Config
 const imageSquareSize = 25;
 const size = 30;
 const framePerSecond = 25;
@@ -164,7 +166,7 @@ const squareCountY = canvas.height / size;
 let drawIntervalId;
 let updateIntervalId;
 
-
+// Temporary for control display
 let activeSettingItem;
 let gameSpeedTemp;
 
@@ -392,6 +394,10 @@ const drawScore = () => {
     scoreText.innerHTML = score;
 };
 
+const drawSpeed = () => {
+    speedText.innerHTML = gameSpeed;
+}
+
 const drawGameOver = () => {
     // Draw background alpha black
     ctx.globalAlpha = 0.7;
@@ -439,6 +445,7 @@ const draw = () => {
         // Check first loop
         if (firstLoop) {
             drawNextShape();
+            drawSpeed();
             firstLoop = false;
         }
         drawScore();
@@ -490,6 +497,7 @@ const resetVars = () => {
 const saveSettings = () => {
     console.log("Save settings...");
     gameSpeed = gameSpeedTemp;
+    drawSpeed();
 };
 
 const blurButton = (button) => {
@@ -664,7 +672,7 @@ window.addEventListener("keydown", (event) => {
         if (event.keyCode == 83) {  // key 's' for save settings
             saveSettings();
             closeModalSettings();
-            clearLoop();
+            // clearLoop();
             resetVars();
             gameLoop();
         }
@@ -705,7 +713,7 @@ btnSaveSettings.addEventListener("click", () => {
     blurButton(btnSaveSettings);
     closeModalSettings();
     resetVars();
-    clearLoop();
+    // clearLoop();
     gameLoop();
 });
 

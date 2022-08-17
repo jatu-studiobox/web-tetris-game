@@ -41,6 +41,12 @@ body {
     text-align: right;
 }
 
+.speed-text {
+    font-size: 22px;
+    color: white;
+    text-align: center;
+}
+
 .imageTemplate {
     display: none;
 }
