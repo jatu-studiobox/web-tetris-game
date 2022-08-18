@@ -9,3 +9,5 @@ Based from practice at [ASMR Programming - Coding Tetris - No Talking](https://w
 * Pause/Continue game
 * More button function
 * Edit config, such as game speed
+
+If there are any feedback or issues, can issue at [https://github.com/jatu-studiobox/web-tetris-game/issues](https://github.com/jatu-studiobox/web-tetris-game/issues)
