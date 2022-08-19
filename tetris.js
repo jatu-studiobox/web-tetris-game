@@ -152,6 +152,10 @@ const btnCloseController = document.getElementById("btnCloseController");
 const settingItems = document.querySelectorAll(".setting-item");
 const gameSpeedItems = document.querySelectorAll(".game-speed-item");
 const btnSaveSettings = document.getElementById("btnSaveSettings");
+const btnOpenAbout = document.getElementById("btnOpenAbout");
+const btnCloseAbout = document.getElementById("btnCloseAbout");
+const modalAbout = document.getElementById("modalAbout");
+const linkGitHub = document.getElementById("linkGitHub");
 
 // Game Config
 const imageSquareSize = 25;
@@ -230,6 +234,7 @@ let gamePause;
 let firstLoop;
 let openedDialogController;
 let openedDialogSettings;
+let openedDialogAbout;
 let deletedRows = 0;
 
 const gameLoop = () => {
@@ -237,11 +242,6 @@ const gameLoop = () => {
     if (drawIntervalId) clearInterval(drawIntervalId);
     updateIntervalId = setInterval(update, 1000 / gameSpeed);
     drawIntervalId = setInterval(draw, 1000 / framePerSecond);
-};
-
-const clearLoop = () => {
-    clearInterval(updateIntervalId);
-    clearInterval(drawIntervalId);
 };
 
 const deleteCompleteRows = () => {
@@ -516,6 +516,12 @@ const setModalController = (setValue) => {
     modalController.style.display = setValue ? "block" : "none";
 };
 
+// function for 'Controller' modal display & status
+const setModalAbout = (setValue) => {
+    openedDialogAbout = setValue;
+    modalAbout.style.display = setValue ? "block" : "none";
+};
+
 // function for open 'Settings' modal
 const openModalSettings = () => {
     if (!openedDialogSettings) {
@@ -555,6 +561,22 @@ const openModalController = () => {
 // function for close 'Controller' modal
 const closeModalController = () => {
     if (openedDialogController) setModalController(false);
+};
+
+// function for open 'Controller' modal
+const openModalAbout = () => {
+    if (!openedDialogAbout) {
+        setModalAbout(true);
+        // case game not over, then set
+        if (!gameOver) {
+            setPause(true); // pause game
+        }
+    }
+};
+
+// function for close 'Controller' modal
+const closeModalAbout = () => {
+    if (openedDialogAbout) setModalAbout(false);
 };
 
 const setActiveGameSpeedHighLight = () => {
@@ -612,7 +634,7 @@ const prepareSettingItems = () => {
 
 // Add Event 'Keydown' for play game
 window.addEventListener("keydown", (event) => {
-    if (!openedDialogController && !openedDialogSettings) {
+    if (!openedDialogController && !openedDialogSettings && !openedDialogAbout) {
         if (!gameOver) {
             if (!gamePause) {
                 if (event.keyCode == 37) currentShape.moveLeft();   // key 'left' for move to left
@@ -629,10 +651,18 @@ window.addEventListener("keydown", (event) => {
         if (event.keyCode == 82) resetVars();  // key 'r' for refresh game
         if (event.keyCode == 67) openModalController(); // key 'c' for open controller dialog
         if (event.keyCode == 69) openModalSettings();  // key 'e' for open settings dialog
+        if (event.keyCode == 65) openModalAbout();  // key 'a' for open settings dialog
     }
 
     if (openedDialogController) {
         if (event.keyCode == 88) closeModalController();    // key 'x' for exit controller dialog
+    }
+
+    if (openedDialogAbout) {
+        if (event.keyCode == 88) closeModalAbout();    // key 'x' for exit controller dialog
+        if (event.keyCode == 13) {  // key 'Enter' for open GitHub Link
+            linkGitHub.click();
+        }
     }
 
     if (openedDialogSettings) {
@@ -672,7 +702,6 @@ window.addEventListener("keydown", (event) => {
         if (event.keyCode == 83) {  // key 's' for save settings
             saveSettings();
             closeModalSettings();
-            // clearLoop();
             resetVars();
             gameLoop();
         }
@@ -707,13 +736,22 @@ btnCloseController.addEventListener("click", () => {
     closeModalController();
 });
 
+btnOpenAbout.addEventListener("click", () => {
+    blurButton(btnOpenAbout);
+    openModalAbout();
+});
+
+btnCloseAbout.addEventListener("click", () => {
+    blurButton(btnCloseAbout);
+    closeModalAbout();
+});
+
 // Add Event 'refresh' button click
 btnSaveSettings.addEventListener("click", () => {
     saveSettings();
     blurButton(btnSaveSettings);
     closeModalSettings();
     resetVars();
-    // clearLoop();
     gameLoop();
 });
 

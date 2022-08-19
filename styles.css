@@ -188,3 +188,21 @@ button:active {
 .game-speed-item-highlight-not-active {
     border: solid 2px gray;
 }
+
+.about-content {
+    color: white;
+}
+
+.about-item {
+    margin: 10px 0px;
+}
+
+.about-item a {
+    text-decoration: underline;
+    color: white;
+}
+
+.about-item a:visited {
+    text-decoration: underline;
+    color: white;
+}
