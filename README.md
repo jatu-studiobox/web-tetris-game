@@ -1,7 +1,7 @@
 # Web Tetris Game
 This is my practice by using vanilla JavaScript to build a simplified web Tetris game.
 
-I follow the teaching of Ania Kubow. [See references](#references)
+I follow the teaching at ASMR Programming - Coding Tetris - No Talking. [See references](#references)
 
 ![Web Tetris Game by StudioBox](https://user-images.githubusercontent.com/43282496/185702681-3b71a7a7-bf91-495a-a8f9-56bcc1148b46.png)
 
