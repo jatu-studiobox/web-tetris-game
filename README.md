@@ -10,12 +10,11 @@ I follow the teaching of Ania Kubow. [See references](#references)
 
 ## Additional challenges and fixed some bugs
 * Pause/Continue game
-* More button function
-* Edit game settings, such as game speed
+* Add control game by button functional
+* Able to use game settings, such as game speed
 
 ## References
 [ASMR Programming - Coding Tetris - No Talking](https://www.youtube.com/watch?v=h1-zQ0SSS6M)
-
 
 ## Issues
 If you have any issues, please don't mind to create. Thank you very much. 😊
