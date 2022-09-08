@@ -18,3 +18,6 @@ I follow the teaching at ASMR Programming - Coding Tetris - No Talking. [See ref
 
 ## Issues
 If you have any issues, please don't mind to create. Thank you very much. 😊
+
+## Game Wiki
+Go to [game wiki](https://github.com/jatu-studiobox/minesweeper/wiki)
